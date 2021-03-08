@@ -1,9 +1,7 @@
 from django.db import models
 
-# Create your models here.
 
-
-class Books(models.Model):
+class Book(models.Model):
     isbn = models.CharField(max_length=13, blank=False, default='')
     book_name = models.CharField(max_length=50, blank=False, default='')
     company = models.CharField(max_length=50, blank=False, default='')
