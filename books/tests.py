@@ -1,8 +1,16 @@
-from django.test import TestCase
+from books.serializers import BookSerializer
+from django.http import response
+from django.test import TestCase, Client
+from rest_framework.test import APIClient
+from rest_framework import status
+from django.urls import reverse
+from django.http.response import JsonResponse
 from .models import Book
 
 # Create your tests here.
 # d
+
+client = Client()
 
 
 class ModelTestCase(TestCase):
@@ -19,3 +27,39 @@ class ModelTestCase(TestCase):
         self.book.save()
         new_count = Book.objects.count()
         self.assertNotEqual(old_count, new_count)
+
+
+class GetAllBooksTest(TestCase):
+    """  Test module for GET all books API """
+
+    def setUp(self):
+        Book.objects.create(
+            isbn='0000000000001',
+            bookName='sample book 1',
+            company='sample company 1',
+            price=1.00,
+            genreCode=1
+        )
+        Book.objects.create(
+            isbn='0000000000002',
+            bookName='sample book 2',
+            company='sample company 2',
+            price=2.00,
+            genreCode=2
+        )
+        Book.objects.create(
+            isbn='0000000000003',
+            bookName='sample book 3',
+            company='sample company 3',
+            price=3.00,
+            genreCode=3
+        )
+
+    def test_get_all_books(self):
+        # get API response
+        response = client.get(reverse('book_list'))
+        # get data from db
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
