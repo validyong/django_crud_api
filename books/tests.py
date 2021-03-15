@@ -6,12 +6,14 @@ from rest_framework import status
 from django.urls import reverse
 from django.http.response import JsonResponse
 from .models import Book
+from rest_framework.response import Response
+import json
 
 # Create your tests here.
 # d
 
 client = Client()
-
+apiClient = APIClient()
 
 class ModelTestCase(TestCase):
     """This class defines the test suite for book model."""
@@ -58,8 +60,9 @@ class GetAllBooksTest(TestCase):
     def test_get_all_books(self):
         # get API response
         response = client.get(reverse('book_list'))
+        apiResponse = apiClient.get(reverse('book_list'))
         # get data from db
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.content, JsonResponse(serializer.data, safe=False).content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
