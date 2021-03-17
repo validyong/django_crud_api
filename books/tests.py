@@ -13,7 +13,6 @@ import json
 # d
 
 client = Client()
-apiClient = APIClient()
 
 
 class ModelTestCase(TestCase):
